@@ -32,8 +32,8 @@ async function readableStreamToObj<T= unknown>(stream: ReadableStream<Uint8Array
 
 const requestSchema = z.object({ 
     text: z.string(),
-    to: z.enum(Object.keys(languages) as [keyof typeof languages]),
-    from: z.enum(Object.keys(languages) as [keyof typeof languages]),
+    to: z.enum(Object.keys(languages) as [keyof typeof languages]).optional(),
+    from: z.enum(Object.keys(languages) as [keyof typeof languages]).optional(),
 })
 
 export function POST(request: Request) { 
@@ -42,8 +42,8 @@ export function POST(request: Request) {
         const body: z.infer<typeof requestSchema> = await readableStreamToObj(request.body)
         const parse = requestSchema.safeParse(body)
         if (!parse.success) { response = parse.error ; return }
-        const { text, to } = body
-        singleTranslate(text, { to }).then(result => response = result)
+        const { text, to, from } = body
+        singleTranslate(text, { to: to ?? "en", from: from ?? "auto" }).then(result => response = result)
     }))
 
     return response
