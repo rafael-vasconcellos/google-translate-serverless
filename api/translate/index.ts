@@ -1,6 +1,5 @@
-import { waitUntil } from '@vercel/functions'
 import { z } from 'zod'
-import { translate, singleTranslate, languages, googleTranslateApi } from 'google-translate-api-x';
+import { translate, singleTranslate, languages } from 'google-translate-api-x';
 
 
 
@@ -36,15 +35,15 @@ const requestSchema = z.object({
     from: z.enum(Object.keys(languages) as [keyof typeof languages]).optional(),
 })
 
-export function POST(request: Request) { 
-    let response: googleTranslateApi.TranslationResponse | z.ZodError<any> = {} as never
-    waitUntil( new Promise( async(res) => { 
-        const body: z.infer<typeof requestSchema> = await readableStreamToObj(request.body)
-        const parse = requestSchema.safeParse(body)
-        if (!parse.success) { response = parse.error ; return }
-        const { text, to, from } = body
-        singleTranslate(text, { to: to ?? "en", from: from ?? "auto" }).then(result => response = result)
-    }))
+export async function POST(request: Request) { 
+    const body: z.infer<typeof requestSchema> = await readableStreamToObj(request.body)
+    const parse = requestSchema.safeParse(body)
+    if (!parse.success) { return new Response(JSON.stringify(parse.error), { status: 400 }); }
+    const { text, to, from } = body
+    const response = JSON.stringify(await singleTranslate(text, { to: to ?? "en", from: from ?? "auto" }))
 
-    return response
+    console.log(response)
+    return new Response(response, { 
+        //headers: { "Content-Type": "application/json" }
+    })
 }
