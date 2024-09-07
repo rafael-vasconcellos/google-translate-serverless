@@ -9,3 +9,16 @@ export async function POST(request: Request) {
     return await new Translator(() => singleTranslate(text, { to: to ?? "en", from: from ?? "auto" }))
     .execute()
 }
+
+export async function OPTIONS(request: Request) { 
+    return new Response("", { 
+        status: 204, 
+        headers: { 
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Credentials": "true",
+            "Access-Control-Allow-Methods": "POST",
+            "Access-Control-Allow-Headers": "Content-Type",
+            'Access-Control-Max-Age': '86400', // Cache preflight (1 day)
+        }
+    })
+}
