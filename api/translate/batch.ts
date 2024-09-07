@@ -1,5 +1,5 @@
 import { batchTranslate } from "google-translate-api-x";
-import { Translator } from "../../../lib/translator";
+import { Translator } from "../../lib/translator";
 
 
 export async function POST(request: Request) { 
