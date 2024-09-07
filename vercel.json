@@ -19,12 +19,6 @@
     "headers": [
         {
             "source": "/(.*)",
-            "has": [
-                {
-                    "type": "method",
-                    "value": "OPTIONS"
-                }
-            ],
             "headers": [
                 {
                     "key": "Access-Control-Allow-Origin",
