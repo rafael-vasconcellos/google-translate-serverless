@@ -1,8 +1,8 @@
-{ 
+{
     "version": 2,
-    "routes": [ 
-        { 
-            "src": "/(.*)",
+    "routes": [
+        {
+            "src": "/",
             "dest": "/api"
         }
     ]
