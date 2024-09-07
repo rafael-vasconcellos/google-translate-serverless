@@ -11,32 +11,26 @@ const requestSchema = z.object({
 
 export class Translator { 
     public readonly request?: Request
-    private handler?: (
-        input: string,
-        opts?: googleTranslateApi.RequestOptions,
-    ) => googleTranslateApi.TranslationResponseStructure<any>;
+    private handler?: () => unknown
 
-    constructor(request: Request, handler: CallableFunction) { 
-        if (request instanceof Request && typeof handler === "function") { 
-            this.request = request
-            this.handler = handler as any
-        }
+    constructor(handler: () => unknown) { 
+        if (typeof handler === "function") { this.handler = handler as any }
     }
 
     async execute() { 
-        if (this.request && typeof this.handler === "function") { 
-            const body: z.infer<typeof requestSchema> = await readableStreamToObj(this.request?.body)
-            const parse = requestSchema.safeParse(body)
-            if (!parse.success) { return new Response(JSON.stringify(parse.error), { status: 400 }); }
-            const { text, to, from } = body
-            const response = JSON.stringify(await this.handler(text, { to: to ?? "en", from: from ?? "auto" }))
-
-            console.log(response)
+        if (typeof this.handler === "function") { 
+            const response = JSON.stringify(await this.handler())
+            //console.log(response)
             return new Response(response, { 
-                //headers: { "Content-Type": "application/json" }
+                headers: { "Content-Type": "application/json" }
             })
         }
 
+    }
+
+    public static async validateBody(bodyStream?: ReadableStream<Uint8Array> | null) { 
+        const body: z.infer<typeof requestSchema> = await readableStreamToObj(bodyStream)
+        return requestSchema.safeParse(body)
     }
 
 }

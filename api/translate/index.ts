@@ -3,6 +3,9 @@ import { Translator } from "../../lib/translator";
 
 
 export async function POST(request: Request) { 
-    const translator = new Translator(request, singleTranslate)
-    return await translator.execute()
+    const { success, data, error } = await Translator.validateBody(request.body)
+    if (!success) {  return new Response(JSON.stringify(error), {status: 400})  }
+    const { text, to, from } = data
+    return await new Translator(() => singleTranslate(text, { to: to ?? "en", from: from ?? "auto" }))
+    .execute()
 }
