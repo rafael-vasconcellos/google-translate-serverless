@@ -1,11 +1,12 @@
 import { translate } from "@vitalets/google-translate-api";
+import { VercelRequest, VercelResponse } from "@vercel/node";
 import { Translator } from "../../../lib/translator";
 
 
-export async function POST(request: Request) { 
-    const { success, data, error } = await Translator.validateBody(request.body)
-    if (!success) {  return new Response(JSON.stringify(error), {status: 400})  }
-    const { text, to, from } = data
-    return await new Translator(() => translate(text, { to: to ?? "en", from: from ?? "auto" }))
-    .execute()
+export default async function handler(request: VercelRequest, response: VercelResponse) { 
+    const body = Translator.validate(request, response)
+    if (body) { 
+        const translator = new Translator(() => translate(body.text, { to: body.to ?? "en", from: body.from ?? "auto" }))
+        response.status(201).json(await translator.execute())
+    }
 }
