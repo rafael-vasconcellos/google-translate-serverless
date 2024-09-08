@@ -6,7 +6,7 @@ import { validate } from "../../lib/translator";
 export default async function handler(req: VercelRequest, res: VercelResponse) { 
     const body = validate(req, res)
     if (body) { 
-        const response = batchTranslate(body.text, { to: body.to ?? "en", from: body.from ?? "auto" })
+        const response = await batchTranslate(body.text, { to: body.to ?? "en", from: body.from ?? "auto" })
         res.status(201).json(response)
     }
 }
