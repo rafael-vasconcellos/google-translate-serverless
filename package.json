@@ -10,7 +10,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@vercel/node": "^3.2.12",
+    "@vercel/node": "^2.10.3",
     "@vitalets/google-translate-api": "^9.2.0",
     "google-translate-api-x": "^10.7.1",
     "zod": "^3.23.8"
