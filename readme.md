@@ -27,12 +27,33 @@ interface ITranslateOptions {
 interface ITranslateResponse {
   from: string
   to: string
-  trans_result: ITransResult
+  text: string
+  raw: IRawResult
 }
 
-interface ITransResult {
-  dst: string
+interface IRawResult {
+  confidence: number
   src: string
+  spell: Record<String, String>
+  sentences: (Record<String, String>)[]
+  ld_result: { 
+      extended_srclangs: string[]
+      srclangs: string[]
+      srclangs_confidences: number[]
+  }
+}
+
+interface ISentence { 
+  backend: number
+  model_specification: (Record<String, String>)[]
+  orig: string
+  trans: string
+  translation_engine_debug_info: { 
+    model_tracking: { 
+        checkpoint_md5: string
+        launch_doc: string
+    }
+  }[]
 }
 ```
 
